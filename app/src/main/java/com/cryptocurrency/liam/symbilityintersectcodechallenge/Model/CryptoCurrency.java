@@ -26,6 +26,8 @@ public class CryptoCurrency {
     private String algorithm;
     @SerializedName("ProofType")
     private String proofType;
+    @SerializedName("SortOrder")
+    private int sortOrder;
 
     private boolean isLiked = false;
     private String price = null;
@@ -116,5 +118,13 @@ public class CryptoCurrency {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public int getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }

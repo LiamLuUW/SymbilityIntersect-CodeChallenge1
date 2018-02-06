@@ -34,7 +34,7 @@ public class CurrencyListViewModel extends AndroidViewModel {
     }
 
     public void changeLikeStatus(int pos){
-        coinRepository.changeCurrencyLikeStatus(cryptoCurrencyList, pos);
+        coinRepository.changeCurrencyLikeStatus(pos);
     }
 
 

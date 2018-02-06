@@ -12,6 +12,8 @@ import com.cryptocurrency.liam.symbilityintersectcodechallenge.Service.RetrofitM
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -49,12 +51,25 @@ public class CoinRepository {
         return coinRepository;
     }
 
-    public void changeCurrencyLikeStatus(MutableLiveData oldList, int pos) {
+    private Comparator<CryptoCurrency> currencyComparator = new Comparator<CryptoCurrency>() {
+        @Override
+        public int compare(CryptoCurrency c1, CryptoCurrency c2) {
+            return c1.getSortOrder() - c2.getSortOrder();
+        }
+    };
+
+    public void changeCurrencyLikeStatus(int pos) {
         if (liveList.getValue() != null) {
-            CryptoCurrency currency = liveList.getValue().get(pos);
+            dataList = liveList.getValue();
+            CryptoCurrency currency = dataList.remove(pos);
+            if(currency.isLiked()){
+                dataList.add(currency.getSortOrder(), currency);
+            }else{
+                dataList.add(0, currency);
+            }
             currency.setLiked(!currency.isLiked());
         }
-        oldList.setValue(liveList.getValue());
+        liveList.setValue(dataList);
     }
 
     public MutableLiveData<List<CryptoCurrency>> loadList() {
@@ -66,12 +81,15 @@ public class CoinRepository {
             public void onResponse(@NonNull Call<CoinListResponse> call, @NonNull Response<CoinListResponse> response) {
                 CoinListResponse coinListResponse = response.body();
                 Log.v(TAG, "currency list response received");
-                currencyHashMap = coinListResponse.getCryptoCurrencyList();
-                dataList.addAll(currencyHashMap.values());
-                liveList.setValue(dataList);
-                keyList.addAll(currencyHashMap.keySet());
+                if(coinListResponse!=null) {
+                    currencyHashMap = coinListResponse.getCryptoCurrencyList();
+                    dataList.addAll(currencyHashMap.values());
+                    Collections.sort(dataList, currencyComparator);
+                    liveList.setValue(dataList);
+                    keyList.addAll(currencyHashMap.keySet());
 
-                findAllPrices(keyList);
+                    findAllPrices(keyList);
+                }
 
             }
 
@@ -123,18 +141,14 @@ public class CoinRepository {
         HashMap<String, Double> priceList;
         DecimalFormat format;
 
-        public getPricesRunnable(String toCurrency, HashMap<String, CryptoCurrency> currencyList) {
+        getPricesRunnable(String toCurrency, HashMap<String, CryptoCurrency> currencyList) {
             Log.v(TAG_R1, "new thread for requesting price created");
-            final String fromCurrency = "CAD";
             this.toCurrency = toCurrency;
             this.currencyList = currencyList;
             format = new DecimalFormat("$##,###.######");
         }
 
         private void loadPrices() {
-
-
-            Log.i(TAG, toCurrency);
             if (toCurrency != null) {
                 Response<HashMap<String, Double>> response = null;
                 Call<HashMap<String, Double>> call = apiInterface.getPrices(fromCurrency, toCurrency);
