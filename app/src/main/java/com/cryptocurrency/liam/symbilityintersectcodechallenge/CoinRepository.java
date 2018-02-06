@@ -1,5 +1,6 @@
 package com.cryptocurrency.liam.symbilityintersectcodechallenge;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -37,6 +38,7 @@ public class CoinRepository {
     private List<String> keyList = new ArrayList<>();
     private static List<CryptoCurrency> dataList = new ArrayList<>();
     private static Handler mainHandler;
+    private ListReadyListener listReadyListener;
 
     private CoinRepository() {
         Retrofit retrofit = RetrofitManager.getRetrofit();
@@ -62,9 +64,9 @@ public class CoinRepository {
         if (liveList.getValue() != null) {
             dataList = liveList.getValue();
             CryptoCurrency currency = dataList.remove(pos);
-            if(currency.isLiked()){
+            if (currency.isLiked()) {
                 dataList.add(currency.getSortOrder(), currency);
-            }else{
+            } else {
                 dataList.add(0, currency);
             }
             currency.setLiked(!currency.isLiked());
@@ -72,8 +74,19 @@ public class CoinRepository {
         liveList.setValue(dataList);
     }
 
-    public MutableLiveData<List<CryptoCurrency>> loadList() {
+    public MutableLiveData<List<CryptoCurrency>> displayCurrencyList() {
+        return liveList;
+    }
+
+    public void clearAllCache() {
+        if (dataList != null) dataList.clear();
+        if (keyList != null) keyList.clear();
+        if (currencyHashMap != null) currencyHashMap.clear();
+    }
+
+    public void loadList() {
         Log.v(TAG, "load currency list from server");
+        clearAllCache();
         final String coinListURL = RetrofitManager.getCoinListUrl();
         Call<CoinListResponse> call = apiInterface.getCoinList(coinListURL);
         call.enqueue(new Callback<CoinListResponse>() {
@@ -81,7 +94,7 @@ public class CoinRepository {
             public void onResponse(@NonNull Call<CoinListResponse> call, @NonNull Response<CoinListResponse> response) {
                 CoinListResponse coinListResponse = response.body();
                 Log.v(TAG, "currency list response received");
-                if(coinListResponse!=null) {
+                if (coinListResponse != null) {
                     currencyHashMap = coinListResponse.getCryptoCurrencyList();
                     dataList.addAll(currencyHashMap.values());
                     Collections.sort(dataList, currencyComparator);
@@ -89,6 +102,7 @@ public class CoinRepository {
                     keyList.addAll(currencyHashMap.keySet());
 
                     findAllPrices(keyList);
+                    listReadyListener.notifyListReady();
                 }
 
             }
@@ -99,7 +113,7 @@ public class CoinRepository {
             }
         });
 
-        return liveList;
+        //return liveList;
     }
 
     private void findAllPrices(List<String> data) {
@@ -122,8 +136,6 @@ public class CoinRepository {
         ExecutorService executorService = Executors.newFixedThreadPool(5);
         for (String stringRequest : stringRequests) {
             String toCurrency = stringRequest.replace("*", "");
-            Log.i(TAG, toCurrency);
-
             try {
                 executorService.submit(new getPricesRunnable(toCurrency, currencyHashMap));
             } catch (Exception ex) {
@@ -188,7 +200,7 @@ public class CoinRepository {
         private final static String TAG_R2 = "notifyUI_RUNNABLE";
 
         notifyUI() {
-            Log.v(TAG_R2, "called");
+            // Log.v(TAG_R2, "called");
         }
 
         @Override
@@ -198,5 +210,13 @@ public class CoinRepository {
             liveList.setValue(dataList);
         }
 
+    }
+
+    public void setListReadyListener(ListReadyListener listener){
+        this.listReadyListener = listener;
+    }
+
+    public interface ListReadyListener{
+        void notifyListReady();
     }
 }

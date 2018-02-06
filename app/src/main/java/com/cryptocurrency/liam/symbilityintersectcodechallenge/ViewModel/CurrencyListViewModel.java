@@ -19,6 +19,8 @@ public class CurrencyListViewModel extends AndroidViewModel {
     private final String TAG = getClass().getName();
     private CoinRepository coinRepository;
     private MutableLiveData<List<CryptoCurrency>> cryptoCurrencyList = null;
+    private ListReadyWrapperListener listReadyWrapperListener;
+
 
     public CurrencyListViewModel(Application application){
         super(application);
@@ -27,16 +29,40 @@ public class CurrencyListViewModel extends AndroidViewModel {
 
     public LiveData<List<CryptoCurrency>> getCurrencyList(){
         if(cryptoCurrencyList == null ){
-            cryptoCurrencyList = coinRepository.loadList();
+            cryptoCurrencyList = coinRepository.displayCurrencyList();
         }
 
         return cryptoCurrencyList;
+    }
+
+    public void prepareListFromServer(){
+        if(cryptoCurrencyList == null) {
+            coinRepository.loadList();
+        }
+
+    }
+
+    public void clearRepoCache(){
+        coinRepository.clearAllCache();
     }
 
     public void changeLikeStatus(int pos){
         coinRepository.changeCurrencyLikeStatus(pos);
     }
 
+    public void setListReadyWrapperListener(ListReadyWrapperListener listener){
+        this.listReadyWrapperListener = listener;
+        coinRepository.setListReadyListener(new CoinRepository.ListReadyListener() {
+            @Override
+            public void notifyListReady() {
+                listReadyWrapperListener.onListReady();
+            }
+        });
+    }
 
+    public interface ListReadyWrapperListener{
+         void onListReady();
+    }
 
 }
+

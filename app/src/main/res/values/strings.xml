@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Crypto Charts</string>
+    <string name="author_name">Shunqi Lu (Liam)</string>
+    <string name="date">Feb 6, 2018</string>
 </resources>

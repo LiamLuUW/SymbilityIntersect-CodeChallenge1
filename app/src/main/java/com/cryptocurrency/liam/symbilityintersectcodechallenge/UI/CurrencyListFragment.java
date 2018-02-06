@@ -16,7 +16,6 @@ import com.cryptocurrency.liam.symbilityintersectcodechallenge.Model.CryptoCurre
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.R;
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.ViewModel.CurrencyListViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +40,7 @@ public class CurrencyListFragment extends Fragment {
         };
         currencyListAdapter.setOnLikeClickedListener(onLikeClickedListener);
         currencyListViewModel = ViewModelProviders.of(getActivity()).get(CurrencyListViewModel.class);
+        setObserveData();
     }
 
     @Override
@@ -49,9 +49,6 @@ public class CurrencyListFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.currency_list);
         recyclerView.setAdapter(currencyListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //setFakeData();
-        setObserveData();
-
         return  view;
     }
 
@@ -60,6 +57,11 @@ public class CurrencyListFragment extends Fragment {
         super.onResume();
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        currencyListViewModel.clearRepoCache();
+    }
 
     public void setObserveData(){
         if(currencyListViewModel != null) {
@@ -67,30 +69,11 @@ public class CurrencyListFragment extends Fragment {
             currencyListViewModel.getCurrencyList().observe(getActivity(), new Observer<List<CryptoCurrency>>() {
                 @Override
                 public void onChanged(@Nullable List<CryptoCurrency> cryptoCurrencies) {
-                    Log.i("xxx", "notifed change of observing data");
                     currencyListAdapter.setCryptoCurrencyList(cryptoCurrencies);
                     currencyListAdapter.notifyDataSetChanged();
                 }
             });
         }
     }
-
-    public void setFakeData(){
-        List<CryptoCurrency> testList = new ArrayList<>();
-        CryptoCurrency c1 = new CryptoCurrency();
-        c1.setFullName("Test Coin 1");
-        c1.setName("aa");
-        c1.setPrice("12.222");
-        CryptoCurrency c2 = new CryptoCurrency();
-        c2.setFullName("Test Coin 2");
-        c2.setName("ab");
-        c2.setPrice("12367.111");
-        testList.add(c2);
-        testList.add(c1);
-        Log.i(TAG, "setting data size of " + testList.size());
-        currencyListAdapter.setCryptoCurrencyList(testList);
-        currencyListAdapter.notifyDataSetChanged();
-    }
-
 
 }
