@@ -3,7 +3,7 @@ package com.cryptocurrency.liam.symbilityintersectcodechallenge.Model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by Liam on 2018-02-02.
+ * Crypto currency object
  */
 
 public class CryptoCurrency {
@@ -28,7 +28,7 @@ public class CryptoCurrency {
     private String proofType;
 
     private boolean isLiked = false;
-    private String price = "123456";
+    private String price = null;
 
     public long getId() {
         return id;

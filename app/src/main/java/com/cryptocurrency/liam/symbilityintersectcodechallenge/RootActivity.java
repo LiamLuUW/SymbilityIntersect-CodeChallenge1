@@ -1,10 +1,9 @@
 package com.cryptocurrency.liam.symbilityintersectcodechallenge;
 
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
-import com.cryptocurrency.liam.symbilityintersectcodechallenge.Service.RetrofitManager;
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.UI.CurrencyListFragment;
 
 public class RootActivity extends AppCompatActivity {

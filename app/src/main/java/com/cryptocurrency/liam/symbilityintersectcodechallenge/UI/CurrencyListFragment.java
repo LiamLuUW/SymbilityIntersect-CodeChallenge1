@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Liam on 2018-02-03.
+ * Fragment UI for displaying the currency list
  */
 
 public class CurrencyListFragment extends Fragment {
@@ -33,6 +33,13 @@ public class CurrencyListFragment extends Fragment {
         Log.i(TAG, "created");
         super.onCreate(savedInstanceBundle);
         currencyListAdapter = new CurrencyListAdapter();
+        OnLikeClickedListener onLikeClickedListener = new OnLikeClickedListener() {
+            @Override
+            public void onLikeClicked(int pos) {
+                currencyListViewModel.changeLikeStatus(pos);
+            }
+        };
+        currencyListAdapter.setOnLikeClickedListener(onLikeClickedListener);
         currencyListViewModel = ViewModelProviders.of(getActivity()).get(CurrencyListViewModel.class);
     }
 

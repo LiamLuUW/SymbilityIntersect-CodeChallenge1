@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitManager {
     private static final String TAG = "RETROFIT_MANAGER";
     private static final String COIN_LIST_URL = "https://www.cryptocompare.com/api/data/coinlist/";
-    private static final String BASE_URL = "https://min-api.cryptocompare.com/data/";
+    private static final String BASE_URL = "https://min-api.cryptocompare.com/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getRetrofit() {

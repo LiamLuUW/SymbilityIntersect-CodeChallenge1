@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -8,47 +7,55 @@
         android:id="@+id/currency_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/image_like"
+        android:layout_alignTop="@id/button_like"
         android:layout_marginStart="18dp"
         android:layout_marginTop="12dp"
+        android:text="BitCoin"
         android:textSize="22sp"
-        android:textStyle="bold"
-        android:text="BitCoin"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/currency_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/image_like"
+        android:layout_alignBottom="@id/button_like"
         android:layout_margin="12dp"
-        android:textSize="12sp"
-        android:text="$11111"/>
+        android:text="$11111"
+        android:textSize="12sp" />
 
-    <ImageView
-        android:id="@+id/image_like"
+    <FrameLayout
+        android:id="@+id/button_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_star_filled"
-        android:contentDescription="NOT LIKED ITEM"
-        android:visibility="invisible"/>
+        android:layout_alignParentEnd="true">
 
-    <ImageView
-        android:id="@+id/image_unlike"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_star_not_filled"
-        android:contentDescription="LIKED ITEM"
-        android:visibility="visible"/>
+        <ImageView
+            android:id="@+id/image_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="NOT LIKED ITEM"
+
+            android:padding="12dp"
+            android:src="@drawable/ic_star_filled"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/image_unlike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="LIKED ITEM"
+            android:padding="12dp"
+            android:src="@drawable/ic_star_not_filled"
+            android:visibility="visible" />
+
+    </FrameLayout>
+
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/image_like"
+        android:layout_below="@id/button_like"
         android:layout_marginStart="12dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@android:color/darker_gray" />
 
 </RelativeLayout>

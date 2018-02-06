@@ -3,30 +3,22 @@ package com.cryptocurrency.liam.symbilityintersectcodechallenge.ViewModel;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.CoinRepository;
-import com.cryptocurrency.liam.symbilityintersectcodechallenge.Model.CoinListResponse;
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.Model.CryptoCurrency;
-import com.cryptocurrency.liam.symbilityintersectcodechallenge.Service.APIInterface;
-import com.cryptocurrency.liam.symbilityintersectcodechallenge.Service.RetrofitManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-
 /**
- * Created by Liam on 2018-02-03.
+ * ViewModel for the currencyList fragment
  */
 
 public class CurrencyListViewModel extends AndroidViewModel {
     private final String TAG = getClass().getName();
     private CoinRepository coinRepository;
-    private LiveData<List<CryptoCurrency>> cryptoCurrencyList = null;
+    private MutableLiveData<List<CryptoCurrency>> cryptoCurrencyList = null;
 
     public CurrencyListViewModel(Application application){
         super(application);
@@ -34,12 +26,15 @@ public class CurrencyListViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<CryptoCurrency>> getCurrencyList(){
-        Log.i(TAG, "xxx ia m ere");
         if(cryptoCurrencyList == null ){
             cryptoCurrencyList = coinRepository.loadList();
         }
 
         return cryptoCurrencyList;
+    }
+
+    public void changeLikeStatus(int pos){
+        coinRepository.changeCurrencyLikeStatus(cryptoCurrencyList, pos);
     }
 
 

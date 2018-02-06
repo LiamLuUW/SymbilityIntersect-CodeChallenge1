@@ -1,7 +1,5 @@
 package com.cryptocurrency.liam.symbilityintersectcodechallenge.Model;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
@@ -9,10 +7,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Created by Liam on 2018-02-02.
+ * Wrapper response for api coinList request
  */
 
 public class CoinListResponse {
@@ -25,8 +22,8 @@ public class CoinListResponse {
     private String baseLinkUrl;
     @SerializedName("Data")
     private HashMap<String, CryptoCurrency> cryptoCurrencyList;
-    private List<CryptoCurrency> dataList = new ArrayList<>();
-    private List<String> keyList = new ArrayList<>();
+    //private List<CryptoCurrency> dataList = new ArrayList<>();
+    //private List<String> keyList = new ArrayList<>();
 
     public String getResponse() {
         return response;
@@ -52,14 +49,22 @@ public class CoinListResponse {
         this.baseLinkUrl = baseLinkUrl;
     }
 
-    public List<CryptoCurrency> getCryptoCurrencyList() {
+    public HashMap<String, CryptoCurrency> getCryptoCurrencyList() {
         Log.i("xxx", "lalala " + cryptoCurrencyList.size());
-       dataList.addAll( cryptoCurrencyList.values());
+       /*dataList.addAll( cryptoCurrencyList.values());
        keyList.addAll(cryptoCurrencyList.keySet());
-       return dataList;
+       return dataList;*/
+       return cryptoCurrencyList;
+    }
+/*
+    public List<String> getKeyList() {
+        return keyList;
     }
 
-
+    public void setKeyList(List<String> keyList) {
+        this.keyList = keyList;
+    }
+    */
 }
 
 
