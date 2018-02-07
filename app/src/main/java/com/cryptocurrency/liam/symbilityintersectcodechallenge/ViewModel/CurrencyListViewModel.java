@@ -42,10 +42,6 @@ public class CurrencyListViewModel extends AndroidViewModel {
 
     }
 
-    public void clearRepoCache(){
-        coinRepository.clearAllCache();
-    }
-
     public void changeLikeStatus(int pos){
         coinRepository.changeCurrencyLikeStatus(pos);
     }

@@ -60,7 +60,6 @@ public class CurrencyListFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        currencyListViewModel.clearRepoCache();
     }
 
     public void setObserveData(){

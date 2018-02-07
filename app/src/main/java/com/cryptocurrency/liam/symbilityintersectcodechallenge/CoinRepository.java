@@ -78,7 +78,7 @@ public class CoinRepository {
         return liveList;
     }
 
-    public void clearAllCache() {
+    private void clearAllCache() {
         if (dataList != null) dataList.clear();
         if (keyList != null) keyList.clear();
         if (currencyHashMap != null) currencyHashMap.clear();

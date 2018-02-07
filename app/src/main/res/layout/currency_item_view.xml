@@ -10,7 +10,6 @@
         android:layout_alignTop="@id/button_like"
         android:layout_marginStart="18dp"
         android:layout_marginTop="8dp"
-        android:text="BitCoin"
         android:textSize="22sp"
         android:textStyle="bold" />
 
@@ -34,8 +33,6 @@
             android:id="@+id/image_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="NOT LIKED ITEM"
-
             android:padding="12dp"
             android:src="@drawable/ic_star_filled"
             android:visibility="invisible" />
@@ -44,7 +41,6 @@
             android:id="@+id/image_unlike"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="LIKED ITEM"
             android:padding="12dp"
             android:src="@drawable/ic_star_not_filled"
             android:visibility="visible" />
