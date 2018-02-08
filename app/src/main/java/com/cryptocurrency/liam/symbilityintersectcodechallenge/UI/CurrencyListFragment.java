@@ -58,9 +58,9 @@ public class CurrencyListFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
+    public void onPause() {
         currencyListViewModel.storeData();
-        super.onDestroy();
+        super.onPause();
     }
 
     public void setObserveData() {

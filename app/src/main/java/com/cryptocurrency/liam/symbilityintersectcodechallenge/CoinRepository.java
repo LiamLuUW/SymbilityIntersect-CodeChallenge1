@@ -46,7 +46,6 @@ public class CoinRepository {
 
     private final static MutableLiveData<List<CryptoCurrency>> liveList = new MutableLiveData<>();
     private static HashMap<String, CryptoCurrency> currencyHashMap;
-    private List<String> keyList = new ArrayList<>();
     private static List<CryptoCurrency> dataList = new ArrayList<>();
     private static HashSet<Long> favouredList;
 
@@ -105,7 +104,6 @@ public class CoinRepository {
     // utility method to clear all ram cache
     private void clearAllCache() {
         if (dataList != null) dataList.clear();
-        if (keyList != null) keyList.clear();
         if (currencyHashMap != null) currencyHashMap.clear();
     }
 
@@ -130,9 +128,7 @@ public class CoinRepository {
                     dataList.addAll(currencyHashMap.values());
                     Collections.sort(dataList, favourComparator);
                     liveList.setValue(dataList);
-                    keyList.addAll(currencyHashMap.keySet());
-
-                    findAllPrices(keyList);
+                    findAllPrices(new ArrayList<>(currencyHashMap.keySet()));
                     listReadyListener.notifyListReady();
                 }
 
@@ -168,7 +164,7 @@ public class CoinRepository {
         for (String stringRequest : stringRequests) {
             String toCurrency = stringRequest.replace("*", "");
             try {
-                executorService.submit(new getPricesRunnable(toCurrency, currencyHashMap));
+                executorService.submit(new getPricesRunnable(toCurrency));
             } catch (Exception ex) {
                 Log.i(TAG, "execute runnable failed");
             }
@@ -178,22 +174,19 @@ public class CoinRepository {
 
     private static class getPricesRunnable implements Runnable {
         private final String TAG_R1 = getClass().getName();
-        private final String fromCurrency = DISPLAY_CURRENCY;
         String toCurrency;
-        HashMap<String, CryptoCurrency> currencyList;
         HashMap<String, Double> priceList;
         DecimalFormat format;
 
-        getPricesRunnable(String toCurrency, HashMap<String, CryptoCurrency> currencyList) {
+        getPricesRunnable(String toCurrency) {
             this.toCurrency = toCurrency;
-            this.currencyList = currencyList;
             format = new DecimalFormat(CURRENCY_FORMAT);
         }
 
         private void loadPrices() {
             if (toCurrency != null) {
                 Response<HashMap<String, Double>> response = null;
-                Call<HashMap<String, Double>> call = apiInterface.getPrices(fromCurrency, toCurrency);
+                Call<HashMap<String, Double>> call = apiInterface.getPrices(DISPLAY_CURRENCY, toCurrency);
                 try {
                     response = call.execute();
                 } catch (Exception ex) {
@@ -210,9 +203,9 @@ public class CoinRepository {
 
         private synchronized void bindPriceWithCurrency() {
             for (final String key : priceList.keySet()) {
-                if (currencyList.get(key) != null) {
+                if (currencyHashMap.get(key) != null) {
                     Double price = priceList.get(key);
-                    currencyList.get(key).setPrice(format.format(1 / price));
+                    currencyHashMap.get(key).setPrice(format.format(1 / price));
                 }
             }
         }
@@ -226,8 +219,6 @@ public class CoinRepository {
     }
 
     private static class notifyUI implements Runnable {
-        private final static String TAG_R2 = "notifyUI_RUNNABLE";
-
         @Override
         public void run() {
             //update livedata
