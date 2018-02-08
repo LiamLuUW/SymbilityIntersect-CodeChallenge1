@@ -8,7 +8,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by Liam on 2018-02-02.
+ * A abstracted Retrofit manager
  */
 
 public class RetrofitManager {
@@ -19,7 +19,8 @@ public class RetrofitManager {
 
     public static Retrofit getRetrofit() {
 
-        if (retrofit==null) {
+        if (retrofit == null) {
+            Log.v(TAG, "created");
             // add an interceptor to log detail server response
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -32,11 +33,11 @@ public class RetrofitManager {
                     //.client(httpClient.build())
                     .build();
         }
-        return  retrofit;
+        return retrofit;
     }
 
-    public static String getCoinListUrl(){
-        return  COIN_LIST_URL;
+    public static String getCoinListUrl() {
+        return COIN_LIST_URL;
     }
 
 

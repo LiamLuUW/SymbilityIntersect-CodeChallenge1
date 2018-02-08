@@ -22,8 +22,6 @@ public class CoinListResponse {
     private String baseLinkUrl;
     @SerializedName("Data")
     private HashMap<String, CryptoCurrency> cryptoCurrencyList;
-    //private List<CryptoCurrency> dataList = new ArrayList<>();
-    //private List<String> keyList = new ArrayList<>();
 
     public String getResponse() {
         return response;
@@ -50,21 +48,8 @@ public class CoinListResponse {
     }
 
     public HashMap<String, CryptoCurrency> getCryptoCurrencyList() {
-        Log.i("xxx", "lalala " + cryptoCurrencyList.size());
-       /*dataList.addAll( cryptoCurrencyList.values());
-       keyList.addAll(cryptoCurrencyList.keySet());
-       return dataList;*/
-       return cryptoCurrencyList;
+        return cryptoCurrencyList;
     }
-/*
-    public List<String> getKeyList() {
-        return keyList;
-    }
-
-    public void setKeyList(List<String> keyList) {
-        this.keyList = keyList;
-    }
-    */
 }
 
 

@@ -34,17 +34,21 @@ import retrofit2.Retrofit;
 
 public class CoinRepository {
     private final static String TAG = "CoinRepository";
+    private final static int MAX_THREAD_AMOUNT = 10;
+    private final static String CURRENCY_FORMAT = "$##,###.######";
+    private final static String DISPLAY_CURRENCY = "CAD";
+
     private static CoinRepository coinRepository = null;
     private static APIInterface apiInterface = null;
+    private static AppDataBase appDataBase;
+    private static Handler mainHandler;
+    private static ListReadyListener listReadyListener;
+
     private final static MutableLiveData<List<CryptoCurrency>> liveList = new MutableLiveData<>();
     private static HashMap<String, CryptoCurrency> currencyHashMap;
     private List<String> keyList = new ArrayList<>();
     private static List<CryptoCurrency> dataList = new ArrayList<>();
-    private static Handler mainHandler;
-    private ListReadyListener listReadyListener;
     private static HashSet<Long> favouredList;
-
-    private static AppDataBase appDataBase;
 
     private CoinRepository(Context context) {
         Retrofit retrofit = RetrofitManager.getRetrofit();
@@ -57,10 +61,12 @@ public class CoinRepository {
         if (coinRepository == null) {
             coinRepository = new CoinRepository(context);
         }
+        //load previous liked currency ids from database
         new DBGetLikedCurrency(appDataBase).execute();
         return coinRepository;
     }
 
+    // custom comparator to sort list upon sortOrder and like/unlike
     private Comparator<CryptoCurrency> favourComparator = new Comparator<CryptoCurrency>() {
         @Override
         public int compare(CryptoCurrency c1, CryptoCurrency c2) {
@@ -76,6 +82,7 @@ public class CoinRepository {
         }
     };
 
+    //method to be called when UI noticed a click on Like/Unlike button
     public void changeCurrencyLikeStatus(int pos) {
         if (liveList.getValue() != null) {
             CryptoCurrency currency = dataList.get(pos);
@@ -90,21 +97,24 @@ public class CoinRepository {
         liveList.setValue(dataList);
     }
 
+    //method to display the currency list as livedata for UI observers
     public MutableLiveData<List<CryptoCurrency>> displayCurrencyList() {
         return liveList;
     }
 
+    // utility method to clear all ram cache
     private void clearAllCache() {
         if (dataList != null) dataList.clear();
         if (keyList != null) keyList.clear();
         if (currencyHashMap != null) currencyHashMap.clear();
     }
 
+    //methos used to store currency data into database
     public void storeData() {
-
         new DBInsertCurrencyTask(appDataBase).execute(liveList.getValue());
     }
 
+    // method used to load currency list and prices from the server
     public void loadList() {
         Log.v(TAG, "load currency list from server");
         clearAllCache();
@@ -136,6 +146,7 @@ public class CoinRepository {
 
     }
 
+    //helper method used to load all prices
     private void findAllPrices(List<String> data) {
         List<String> stringRequests = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
@@ -153,7 +164,7 @@ public class CoinRepository {
             i += 30;
         }
 
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        ExecutorService executorService = Executors.newFixedThreadPool(MAX_THREAD_AMOUNT);
         for (String stringRequest : stringRequests) {
             String toCurrency = stringRequest.replace("*", "");
             try {
@@ -167,7 +178,7 @@ public class CoinRepository {
 
     private static class getPricesRunnable implements Runnable {
         private final String TAG_R1 = getClass().getName();
-        private final String fromCurrency = "CAD";
+        private final String fromCurrency = DISPLAY_CURRENCY;
         String toCurrency;
         HashMap<String, CryptoCurrency> currencyList;
         HashMap<String, Double> priceList;
@@ -176,7 +187,7 @@ public class CoinRepository {
         getPricesRunnable(String toCurrency, HashMap<String, CryptoCurrency> currencyList) {
             this.toCurrency = toCurrency;
             this.currencyList = currencyList;
-            format = new DecimalFormat("$##,###.######");
+            format = new DecimalFormat(CURRENCY_FORMAT);
         }
 
         private void loadPrices() {
@@ -225,8 +236,8 @@ public class CoinRepository {
 
     }
 
-    public void setListReadyListener(ListReadyListener listener) {
-        this.listReadyListener = listener;
+    public static void setListReadyListener(ListReadyListener listener) {
+        listReadyListener = listener;
     }
 
     public interface ListReadyListener {

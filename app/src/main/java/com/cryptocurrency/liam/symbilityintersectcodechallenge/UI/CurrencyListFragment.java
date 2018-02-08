@@ -28,7 +28,7 @@ public class CurrencyListFragment extends Fragment {
     private CurrencyListViewModel currencyListViewModel;
 
     @Override
-    public void onCreate(Bundle savedInstanceBundle){
+    public void onCreate(Bundle savedInstanceBundle) {
         Log.i(TAG, "created");
         super.onCreate(savedInstanceBundle);
         currencyListAdapter = new CurrencyListAdapter();
@@ -44,28 +44,28 @@ public class CurrencyListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceBundle){
+    public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceBundle) {
         final View view = inflater.inflate(R.layout.currency_list_fragment_view, viewGroup, false);
         RecyclerView recyclerView = view.findViewById(R.id.currency_list);
         recyclerView.setAdapter(currencyListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        return  view;
+        return view;
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         currencyListViewModel.storeData();
         super.onDestroy();
     }
 
-    public void setObserveData(){
-        if(currencyListViewModel != null) {
-            assert (getActivity()!= null);
+    public void setObserveData() {
+        if (currencyListViewModel != null) {
+            assert (getActivity() != null);
             currencyListViewModel.getCurrencyList().observe(getActivity(), new Observer<List<CryptoCurrency>>() {
                 @Override
                 public void onChanged(@Nullable List<CryptoCurrency> cryptoCurrencies) {

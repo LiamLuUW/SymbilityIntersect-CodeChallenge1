@@ -13,11 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".CryptoCurrencyApp">
-        <activity android:name=".RootActivity">
+        <activity android:name=".UI.RootActivity">
 
         </activity>
 
-        <activity android:name=".SplashActivity" >
+        <activity android:name=".UI.SplashActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

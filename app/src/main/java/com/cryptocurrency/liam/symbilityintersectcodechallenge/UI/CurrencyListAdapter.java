@@ -22,11 +22,11 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
     private List<CryptoCurrency> cryptoCurrencyList;
     private OnLikeClickedListener onLikeClickedListener;
 
-    public CurrencyListAdapter() {
+    CurrencyListAdapter() {
         cryptoCurrencyList = new ArrayList<>();
     }
 
-    public void setOnLikeClickedListener(OnLikeClickedListener listener) {
+    void setOnLikeClickedListener(OnLikeClickedListener listener) {
         this.onLikeClickedListener = listener;
     }
 
@@ -45,9 +45,9 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
         final boolean isLiked = cryptoCurrency.isLiked();
 
         if (currencyName != null) viewHolder.currencyName.setText(currencyName);
-        if (currencyPrice == null){
-            viewHolder.currencyPrice.setText("No Price Data Available");
-        }else{
+        if (currencyPrice == null) {
+            viewHolder.currencyPrice.setText(R.string.price_default);
+        } else {
             viewHolder.currencyPrice.setText(currencyPrice);
         }
 
@@ -66,7 +66,7 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
         return (cryptoCurrencyList == null) ? 0 : cryptoCurrencyList.size();
     }
 
-    public void setCryptoCurrencyList(List<CryptoCurrency> cryptoCurrencyList) {
+    void setCryptoCurrencyList(List<CryptoCurrency> cryptoCurrencyList) {
         this.cryptoCurrencyList = cryptoCurrencyList;
     }
 

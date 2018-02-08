@@ -10,7 +10,7 @@ import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 /**
- * Created by Liam on 2018-02-02.
+ * API Interface for Retrofit
  */
 
 public interface APIInterface {
@@ -18,6 +18,6 @@ public interface APIInterface {
     Call<CoinListResponse> getCoinList(@Url String url);
 
     @GET("data/price")
-    Call<HashMap<String, Double> > getPrices(@Query("fsym") String currencies, @Query("tsyms") String toCurrencies);
+    Call<HashMap<String, Double>> getPrices(@Query("fsym") String currencies, @Query("tsyms") String toCurrencies);
 
 }

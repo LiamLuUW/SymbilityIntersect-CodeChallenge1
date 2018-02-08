@@ -24,7 +24,7 @@ public class CryptoCurrency {
     @SerializedName("Url")
     private String url;
 
-    @ColumnInfo(name="image_url")
+    @ColumnInfo(name = "image_url")
     @SerializedName("ImageUrl")
     private String imageUrl;
 
@@ -34,26 +34,26 @@ public class CryptoCurrency {
     @SerializedName("Symbol")
     private String symbol;
 
-    @ColumnInfo(name="coin_name")
+    @ColumnInfo(name = "coin_name")
     @SerializedName("CoinName")
     private String coinName;
 
-    @ColumnInfo(name="full_name")
+    @ColumnInfo(name = "full_name")
     @SerializedName("FullName")
     private String fullName;
 
     @SerializedName("Algorithm")
     private String algorithm;
 
-    @ColumnInfo(name="proof_type")
+    @ColumnInfo(name = "proof_type")
     @SerializedName("ProofType")
     private String proofType;
 
-    @ColumnInfo(name="sort_order")
+    @ColumnInfo(name = "sort_order")
     @SerializedName("SortOrder")
     private int sortOrder;
 
-    @ColumnInfo(name="is_liked")
+    @ColumnInfo(name = "is_liked")
     private boolean isLiked = false;
 
     private String price = null;

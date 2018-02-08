@@ -17,17 +17,16 @@ import java.util.List;
 @Dao
 public interface CryptoCurrencyDao {
 
-    //insert
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(CryptoCurrency currencies);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(List<CryptoCurrency> currencies);
 
     @Delete
     void delete(CryptoCurrency currencies);
 
-    @Update(onConflict=OnConflictStrategy.REPLACE)
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     void update(CryptoCurrency currency);
 
     @Query("SELECT id FROM crypto_currency WHERE is_liked=1")
@@ -36,6 +35,4 @@ public interface CryptoCurrencyDao {
     @Query("SELECT * FROM crypto_currency")
     List<CryptoCurrency> getAllCurrencies();
 
-    @Query("SELECT * FROM crypto_currency WHERE coin_name=:name")
-    List<CryptoCurrency> getACurrency(String name);
 }
