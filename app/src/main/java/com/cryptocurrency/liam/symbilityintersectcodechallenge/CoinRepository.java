@@ -109,9 +109,9 @@ public class CoinRepository {
         if (currencyHashMap != null) currencyHashMap.clear();
     }
 
-    //methos used to store currency data into database
-    public void storeData() {
-        new DBInsertCurrencyTask(appDataBase).execute(liveList.getValue());
+    //method used to store currency data into database
+    public synchronized void storeData() {
+        new DBInsertCurrencyTask(appDataBase).execute(dataList);
     }
 
     // method used to load currency list and prices from the server

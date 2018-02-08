@@ -15,7 +15,7 @@ import com.cryptocurrency.liam.symbilityintersectcodechallenge.Model.CryptoCurre
  * Database for this app
  */
 
-@Database(entities = {CryptoCurrency.class}, version = 2)
+@Database(entities = {CryptoCurrency.class}, version = 1)
 public abstract class AppDataBase extends RoomDatabase {
 
     private static final String DB_NAME = "appDatabase.db";

@@ -3,4 +3,6 @@
     <string name="author_name">Shunqi Lu (Liam)</string>
     <string name="date">Feb 7, 2018</string>
     <string name="price_default">No Price Data Available</string>
+    <string name="content_description_favoured">favoured currency</string>
+    <string name="content_description_unfavoured">unfavoured currency</string>
 </resources>

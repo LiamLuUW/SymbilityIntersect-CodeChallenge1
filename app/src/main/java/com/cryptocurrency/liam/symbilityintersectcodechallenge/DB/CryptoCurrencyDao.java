@@ -27,7 +27,7 @@ public interface CryptoCurrencyDao {
     void delete(CryptoCurrency currencies);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void update(CryptoCurrency currency);
+    void update(List<CryptoCurrency> currencies);
 
     @Query("SELECT id FROM crypto_currency WHERE is_liked=1")
     List<Long> getLikedCurrencies();

@@ -15,9 +15,7 @@ import com.google.gson.annotations.SerializedName;
         indices = {@Index(value = "is_liked")})
 public class CryptoCurrency {
 
-    @PrimaryKey(autoGenerate = true)
-    private long local_id;
-
+    @PrimaryKey
     @SerializedName("Id")
     private long id;
 
@@ -57,14 +55,6 @@ public class CryptoCurrency {
     private boolean isLiked = false;
 
     private String price = null;
-
-    public long getLocal_id() {
-        return local_id;
-    }
-
-    public void setLocal_id(long local_id) {
-        this.local_id = local_id;
-    }
 
     public long getId() {
         return id;
