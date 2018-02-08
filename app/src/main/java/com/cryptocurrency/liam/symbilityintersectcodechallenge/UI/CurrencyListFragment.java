@@ -59,6 +59,7 @@ public class CurrencyListFragment extends Fragment {
 
     @Override
     public void onDestroy(){
+        currencyListViewModel.storeData();
         super.onDestroy();
     }
 

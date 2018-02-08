@@ -1,11 +1,13 @@
 package com.cryptocurrency.liam.symbilityintersectcodechallenge;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.cryptocurrency.liam.symbilityintersectcodechallenge.DB.AppDataBase;
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.Model.CoinListResponse;
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.Model.CryptoCurrency;
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.Service.APIInterface;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,38 +42,51 @@ public class CoinRepository {
     private static List<CryptoCurrency> dataList = new ArrayList<>();
     private static Handler mainHandler;
     private ListReadyListener listReadyListener;
+    private static HashSet<Long> favouredList;
 
-    private CoinRepository() {
+    private static AppDataBase appDataBase;
+
+    private CoinRepository(Context context) {
         Retrofit retrofit = RetrofitManager.getRetrofit();
         apiInterface = retrofit.create(APIInterface.class);
         mainHandler = new Handler();
+        appDataBase = AppDataBase.getInstance(context);
     }
 
-    public static CoinRepository getCoinRepository() {
+    public static CoinRepository getCoinRepository(Context context) {
         if (coinRepository == null) {
-            coinRepository = new CoinRepository();
+            coinRepository = new CoinRepository(context);
         }
+        new DBGetLikedCurrency(appDataBase).execute();
         return coinRepository;
     }
 
-    private Comparator<CryptoCurrency> currencyComparator = new Comparator<CryptoCurrency>() {
+    private Comparator<CryptoCurrency> favourComparator = new Comparator<CryptoCurrency>() {
         @Override
         public int compare(CryptoCurrency c1, CryptoCurrency c2) {
+            if (favouredList.contains(c1.getId())) {
+                c1.setLiked(true);
+                return -1;
+            }
+            if (favouredList.contains(c2.getId())) {
+                c2.setLiked(true);
+                return 1;
+            }
             return c1.getSortOrder() - c2.getSortOrder();
         }
     };
 
     public void changeCurrencyLikeStatus(int pos) {
         if (liveList.getValue() != null) {
-            dataList = liveList.getValue();
-            CryptoCurrency currency = dataList.remove(pos);
+            CryptoCurrency currency = dataList.get(pos);
             if (currency.isLiked()) {
-                dataList.add(currency.getSortOrder(), currency);
+                favouredList.remove(currency.getId());
             } else {
-                dataList.add(0, currency);
+                favouredList.add(currency.getId());
             }
             currency.setLiked(!currency.isLiked());
         }
+        Collections.sort(dataList, favourComparator);
         liveList.setValue(dataList);
     }
 
@@ -82,6 +98,11 @@ public class CoinRepository {
         if (dataList != null) dataList.clear();
         if (keyList != null) keyList.clear();
         if (currencyHashMap != null) currencyHashMap.clear();
+    }
+
+    public void storeData() {
+
+        new DBInsertCurrencyTask(appDataBase).execute(liveList.getValue());
     }
 
     public void loadList() {
@@ -97,7 +118,7 @@ public class CoinRepository {
                 if (coinListResponse != null) {
                     currencyHashMap = coinListResponse.getCryptoCurrencyList();
                     dataList.addAll(currencyHashMap.values());
-                    Collections.sort(dataList, currencyComparator);
+                    Collections.sort(dataList, favourComparator);
                     liveList.setValue(dataList);
                     keyList.addAll(currencyHashMap.keySet());
 
@@ -113,7 +134,6 @@ public class CoinRepository {
             }
         });
 
-        //return liveList;
     }
 
     private void findAllPrices(List<String> data) {
@@ -154,7 +174,6 @@ public class CoinRepository {
         DecimalFormat format;
 
         getPricesRunnable(String toCurrency, HashMap<String, CryptoCurrency> currencyList) {
-            Log.v(TAG_R1, "new thread for requesting price created");
             this.toCurrency = toCurrency;
             this.currencyList = currencyList;
             format = new DecimalFormat("$##,###.######");
@@ -167,7 +186,7 @@ public class CoinRepository {
                 try {
                     response = call.execute();
                 } catch (Exception ex) {
-                    Log.e(TAG, "Error: PriceList response onFailure " + ex.getMessage());
+                    Log.e(TAG_R1, "Error: PriceList response onFailure " + ex.getMessage());
                 }
 
                 if (response != null && response.isSuccessful()) {
@@ -185,7 +204,6 @@ public class CoinRepository {
                     currencyList.get(key).setPrice(format.format(1 / price));
                 }
             }
-
         }
 
         @Override
@@ -199,24 +217,61 @@ public class CoinRepository {
     private static class notifyUI implements Runnable {
         private final static String TAG_R2 = "notifyUI_RUNNABLE";
 
-        notifyUI() {
-            // Log.v(TAG_R2, "called");
-        }
-
         @Override
         public void run() {
             //update livedata
-            dataList.addAll(currencyHashMap.values());
             liveList.setValue(dataList);
         }
 
     }
 
-    public void setListReadyListener(ListReadyListener listener){
+    public void setListReadyListener(ListReadyListener listener) {
         this.listReadyListener = listener;
     }
 
-    public interface ListReadyListener{
+    public interface ListReadyListener {
         void notifyListReady();
+    }
+
+    /*AsyncTasks for db operations*/
+    private static class DBInsertCurrencyTask extends AsyncTask<List<CryptoCurrency>, Void, Void> {
+
+        private AppDataBase mDB;
+
+        DBInsertCurrencyTask(AppDataBase dataBase) {
+            mDB = dataBase;
+        }
+
+        @Override
+        protected Void doInBackground(final List<CryptoCurrency>... params) {
+            mDB.getCryptoCurrencyDao().insert(params[0]);
+            return null;
+        }
+
+    }
+
+    private static class DBGetLikedCurrency extends AsyncTask<Void, Void, List<Long>> {
+
+        private AppDataBase mDB;
+
+        DBGetLikedCurrency(AppDataBase dataBase) {
+            mDB = dataBase;
+        }
+
+        @Override
+        protected List<Long> doInBackground(Void... args) {
+            return mDB.getCryptoCurrencyDao().getLikedCurrencies();
+        }
+
+        @Override
+        protected void onPostExecute(List<Long> currencyList) {
+            if (currencyList != null) {
+                favouredList = new HashSet<>(currencyList);
+            } else {
+                favouredList = new HashSet<>();
+            }
+        }
+
+
     }
 }

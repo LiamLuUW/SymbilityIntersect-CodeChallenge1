@@ -4,7 +4,6 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.CoinRepository;
 import com.cryptocurrency.liam.symbilityintersectcodechallenge.Model.CryptoCurrency;
@@ -22,31 +21,31 @@ public class CurrencyListViewModel extends AndroidViewModel {
     private ListReadyWrapperListener listReadyWrapperListener;
 
 
-    public CurrencyListViewModel(Application application){
+    public CurrencyListViewModel(Application application) {
         super(application);
-        coinRepository = CoinRepository.getCoinRepository();
+        coinRepository = CoinRepository.getCoinRepository(getApplication());
     }
 
-    public LiveData<List<CryptoCurrency>> getCurrencyList(){
-        if(cryptoCurrencyList == null ){
+    public LiveData<List<CryptoCurrency>> getCurrencyList() {
+        if (cryptoCurrencyList == null) {
             cryptoCurrencyList = coinRepository.displayCurrencyList();
         }
 
         return cryptoCurrencyList;
     }
 
-    public void prepareListFromServer(){
-        if(cryptoCurrencyList == null) {
+    public void prepareListFromServer() {
+        if (cryptoCurrencyList == null) {
             coinRepository.loadList();
         }
 
     }
 
-    public void changeLikeStatus(int pos){
+    public void changeLikeStatus(int pos) {
         coinRepository.changeCurrencyLikeStatus(pos);
     }
 
-    public void setListReadyWrapperListener(ListReadyWrapperListener listener){
+    public void setListReadyWrapperListener(ListReadyWrapperListener listener) {
         this.listReadyWrapperListener = listener;
         coinRepository.setListReadyListener(new CoinRepository.ListReadyListener() {
             @Override
@@ -56,8 +55,12 @@ public class CurrencyListViewModel extends AndroidViewModel {
         });
     }
 
-    public interface ListReadyWrapperListener{
-         void onListReady();
+    public interface ListReadyWrapperListener {
+        void onListReady();
+    }
+
+    public void storeData() {
+        coinRepository.storeData();
     }
 
 }

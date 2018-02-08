@@ -1,36 +1,70 @@
 package com.cryptocurrency.liam.symbilityintersectcodechallenge.Model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Crypto currency object
  */
 
+@Entity(tableName = "crypto_currency",
+        indices = {@Index(value = "is_liked")})
 public class CryptoCurrency {
+
+    @PrimaryKey(autoGenerate = true)
+    private long local_id;
 
     @SerializedName("Id")
     private long id;
+
     @SerializedName("Url")
     private String url;
+
+    @ColumnInfo(name="image_url")
     @SerializedName("ImageUrl")
     private String imageUrl;
+
     @SerializedName("Name")
     private String name;
+
     @SerializedName("Symbol")
     private String symbol;
+
+    @ColumnInfo(name="coin_name")
     @SerializedName("CoinName")
     private String coinName;
+
+    @ColumnInfo(name="full_name")
     @SerializedName("FullName")
     private String fullName;
+
     @SerializedName("Algorithm")
     private String algorithm;
+
+    @ColumnInfo(name="proof_type")
     @SerializedName("ProofType")
     private String proofType;
+
+    @ColumnInfo(name="sort_order")
     @SerializedName("SortOrder")
     private int sortOrder;
 
+    @ColumnInfo(name="is_liked")
     private boolean isLiked = false;
+
     private String price = null;
+
+    public long getLocal_id() {
+        return local_id;
+    }
+
+    public void setLocal_id(long local_id) {
+        this.local_id = local_id;
+    }
 
     public long getId() {
         return id;
